@@ -10,7 +10,7 @@ import Darwin.C
 func getCPUUsage() -> (user: Int, system: Int) {
     do {
         var rusage = rusage()
-        if getrusage(RUSAGE_SELF, &rusage) == 0 {
+        if getrusage(RUSAGE_SELF.littleEndian, &rusage) == 0 {
             let userTime = Int(rusage.ru_utime.tv_sec) * 1000000 + Int(rusage.ru_utime.tv_usec)
             let systemTime = Int(rusage.ru_stime.tv_sec) * 1000000 + Int(rusage.ru_stime.tv_usec)
             return (userTime, systemTime)
