@@ -4,7 +4,7 @@ import PerfectSysInfo
 func routes(_ app: Application) throws {
     // http://195.201.235.59:8080
     app.get { req async -> String in
-        print(SysInfo.CPU.description)
+        print(SysInfo.Memory)
         return "PyzhCloud is working"
     }
     
