@@ -1,36 +1,49 @@
 import Vapor
 import PerfectSysInfo
-
-#if os(Linux)
 import Glibc
-#else
-import Darwin.C
-#endif
 
-func getCPUUsage() -> (user: Int, system: Int) {
-    do {
-        var rusage = rusage()
-        if getrusage(RUSAGE_SELF, &rusage) == 0 {
-            let userTime = Int(rusage.ru_utime.tv_sec) * 1000000 + Int(rusage.ru_utime.tv_usec)
-            let systemTime = Int(rusage.ru_stime.tv_sec) * 1000000 + Int(rusage.ru_stime.tv_usec)
-            return (userTime, systemTime)
-        } else {
-            return (1, 0)
-        }
-    } catch {
-        return (0, 0)
-    }
+func getMemoryInfo() -> String {
+    var info = [Int32]()
+    var size = MemoryLayout<Int32>.size
+    
+    sysinfo(&info)
+    
+    let totalRAM = info[0]
+    let freeRAM = info[1]
+    let usedRAM = totalRAM - freeRAM
+    
+    return "Total RAM: \(totalRAM) MB, Free RAM: \(freeRAM) MB, Used RAM: \(usedRAM) MB"
 }
 
-//let cpuUsage = getCPUUsage()
-//print("CPU usage: \(cpuUsage.user) user, \(cpuUsage.system) system")
+func getCPUInfo() -> String {
+    var info = [Int32]()
+    var size = MemoryLayout<Int32>.size
+    
+    sysinfo(&info)
+    
+    let totalCPU = info[2]
+    let freeCPU = info[3]
+    let usedCPU = totalCPU - freeCPU
+    
+    return "Total CPU: \(totalCPU), Free CPU: \(freeCPU), Used CPU: \(usedCPU)"
+}
 
+func getDiskInfo() -> String {
+    var stat = statvfs()
+    statvfs("/", &stat)
+    
+    let diskSize = stat.f_blocks * stat.f_frsize
+    let freeSpace = stat.f_bfree * stat.f_frsize
+    let usedSpace = diskSize - freeSpace
+    
+    return "Total Disk Space: \(diskSize) bytes, Free Disk Space: \(freeSpace) bytes, Used Disk Space: \(usedSpace) bytes"
+}
 
 func routes(_ app: Application) throws {
     // http://195.201.235.59:8080
     app.get { req async -> String in
 //        print(SysInfo.Memory)
-        print(getCPUUsage())
+        print(getMemoryInfo())
         return "PyzhCloud is working"
     }
     
