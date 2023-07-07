@@ -5,11 +5,10 @@ func routes(_ app: Application) throws {
     // http://195.201.235.59:8080
     app.get { req async -> String in
         do {
-            print("My ass \(SysInfo.CPU)")
-            return "PyzhCloud is working!\(SysInfo.CPU)"
+            let test = "\(SysInfo.CPU)"
+            return "PyzhCloud is working!\(test)"
         } catch {
-            print("My big ass")
-            return "PyzhCloud is almost working!\(SysInfo.CPU)"
+            return "PyzhCloud is almost working!"
         }
     }
     
