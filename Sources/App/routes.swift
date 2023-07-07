@@ -8,12 +8,16 @@ import Darwin.C
 #endif
 
 func getCPUUsage() -> (user: Int, system: Int) {
-    var rusage = rusage()
-    if getrusage(RUSAGE_SELF, &rusage) == 0 {
-        let userTime = rusage.ru_utime.tv_sec * 1000000 + Int(rusage.ru_utime.tv_usec)
-        let systemTime = rusage.ru_stime.tv_sec * 1000000 + Int(rusage.ru_stime.tv_usec)
-        return (Int(userTime), Int(systemTime))
-    } else {
+    do {
+        var rusage = rusage()
+        if getrusage(RUSAGE_SELF, &rusage) == 0 {
+            let userTime = Int(rusage.ru_utime.tv_sec) * 1000000 + Int(rusage.ru_utime.tv_usec)
+            let systemTime = Int(rusage.ru_stime.tv_sec) * 1000000 + Int(rusage.ru_stime.tv_usec)
+            return (userTime, systemTime)
+        } else {
+            return (0, 0)
+        }
+    } catch {
         return (0, 0)
     }
 }
