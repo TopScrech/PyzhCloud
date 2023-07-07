@@ -1,10 +1,32 @@
 import Vapor
 import PerfectSysInfo
 
+#if os(Linux)
+import Glibc
+#else
+import Darwin.C
+#endif
+
+func getCPUUsage() -> (user: Int, system: Int) {
+    var rusage = rusage()
+    if getrusage(RUSAGE_SELF, &rusage) == 0 {
+        let userTime = rusage.ru_utime.tv_sec * 1000000 + Int(rusage.ru_utime.tv_usec)
+        let systemTime = rusage.ru_stime.tv_sec * 1000000 + Int(rusage.ru_stime.tv_usec)
+        return (Int(userTime), Int(systemTime))
+    } else {
+        return (0, 0)
+    }
+}
+
+//let cpuUsage = getCPUUsage()
+//print("CPU usage: \(cpuUsage.user) user, \(cpuUsage.system) system")
+
+
 func routes(_ app: Application) throws {
     // http://195.201.235.59:8080
     app.get { req async -> String in
-        print(SysInfo.Memory)
+//        print(SysInfo.Memory)
+        print(getCPUUsage())
         return "PyzhCloud is working"
     }
     
