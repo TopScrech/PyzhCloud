@@ -14,7 +14,8 @@ func routes(_ app: Application) throws {
     
     // http://195.201.235.59:8080/hello
     app.get("hello") { req async -> String in
-        "Hello, world!"
+        print("hello")
+        return "Hello, world!"
     }
     
     // http://195.201.235.59:8080/param/[param]
